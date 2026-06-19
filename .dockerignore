@@ -1,0 +1,12 @@
+# Keep Docker build context small while preserving Go package directories.
+**
+
+!go.mod
+!go.sum
+!cmd/
+!cmd/**
+!api/
+!api/**
+!internal/
+!internal/**
+**/*_test.go

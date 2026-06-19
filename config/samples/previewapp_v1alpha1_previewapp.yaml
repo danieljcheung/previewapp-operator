@@ -1,0 +1,13 @@
+apiVersion: previewapp.danieljcheung.com/v1alpha1
+kind: PreviewApp
+metadata:
+  labels:
+    app.kubernetes.io/name: previewapp
+    app.kubernetes.io/managed-by: kustomize
+  name: whisper-demo
+spec:
+  image: ghcr.io/stefanprodan/podinfo:6.9.1
+  appPort: 9898
+  ttlSeconds: 3600
+  route:
+    host: whisper-demo
