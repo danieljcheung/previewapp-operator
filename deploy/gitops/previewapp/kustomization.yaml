@@ -7,4 +7,4 @@ resources:
 images:
 - name: controller
   newName: ghcr.io/danieljcheung/previewapp-controller
-  newTag: v0.1.0
+  newTag: ae8a97a73d36826382986c56b395a5cc3b0aa5c0
