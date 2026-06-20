@@ -2,40 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Check for reduced motion preference
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // 2. Generate Decorative QR Grid inside the Ticket Pass
-  const qr = document.querySelector('.pass-qr');
-  if (qr) {
-    for (let r = 0; r < 12; r++) {
-      for (let c = 0; c < 12; c++) {
-        const dot = document.createElement('div');
-        dot.classList.add('qr-dot');
-        
-        // Top-left locator (3x3 square)
-        if (r < 3 && c < 3) {
-          dot.classList.add('corner');
-        }
-        // Top-right locator
-        else if (r < 3 && c >= 9) {
-          dot.classList.add('corner');
-        }
-        // Bottom-left locator
-        else if (r >= 9 && c < 3) {
-          dot.classList.add('corner');
-        }
-        // Mock pattern for the rest
-        else {
-          const rand = Math.random();
-          if (rand > 0.6) {
-            dot.classList.add('filled');
-          } else if (rand > 0.45) {
-            dot.classList.add('accent');
-          }
-        }
-        qr.appendChild(dot);
-      }
-    }
-  }
-
   // 3. Canvas Atmosphere Particle Animation
   const canvas = document.getElementById('atmosphere');
   if (canvas) {
@@ -60,13 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
         this.x = Math.random() * canvas.width;
         this.y = canvas.height + Math.random() * 20; // start slightly below screen
         this.vx = (Math.random() - 0.5) * 0.3;
-        this.vy = -(Math.random() * 0.4 + 0.1); // float upwards slowly
-        this.size = Math.random() * 5 + 1.5;
-        this.color = Math.random() > 0.5 ? '232, 216, 200' : '229, 193, 190'; // Champagne or Blush
+        this.vy = -(Math.random() * 0.5 + 0.2); // float upwards slowly (like boba pearls)
+        this.size = Math.random() * 8 + 3; // Boba pearls are slightly larger and softer
+        const colors = [
+          '232, 216, 200', // Champagne / Milk tea
+          '152, 217, 194', // Mint
+          '255, 255, 255', // Pearl White
+          '210, 180, 140'  // Soft Oolong Milk tea
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
         this.alpha = 0;
-        this.maxAlpha = Math.random() * 0.5 + 0.1;
+        this.maxAlpha = Math.random() * 0.4 + 0.1;
         this.life = 0;
-        this.maxLife = Math.random() * 300 + 150;
+        this.maxLife = Math.random() * 400 + 200;
       }
       update() {
         this.x += this.vx;
@@ -128,16 +100,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 5. RSVP Interactions (Client-only state sync)
-  const rsvpButtons = document.querySelectorAll('.btn-rsvp');
-  const rsvpStateTexts = document.querySelectorAll('.rsvp-state');
+  // 5. Share Interactions (Client-only state sync)
+  const shareButtons = document.querySelectorAll('.btn-share-team');
+  const shareStateTexts = document.querySelectorAll('.share-state');
 
-  rsvpButtons.forEach(btn => {
+  shareButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       
-      rsvpButtons.forEach(b => {
-        b.textContent = "You're on the list";
+      // Copy link to clipboard
+      const inviteUrl = "https://hello.popinvites.com";
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(inviteUrl).catch(err => console.error(err));
+      }
+
+      shareButtons.forEach(b => {
+        b.textContent = "Marked as shared";
         b.disabled = true;
         b.style.background = 'rgba(152, 217, 194, 0.2)';
         b.style.color = '#98d9c2';
@@ -145,10 +123,33 @@ document.addEventListener('DOMContentLoaded', () => {
         b.style.boxShadow = 'none';
       });
 
-      rsvpStateTexts.forEach(txt => {
-        txt.textContent = "RSVP held locally for this demo";
+      shareStateTexts.forEach(txt => {
+        txt.textContent = "Share note saved locally for this demo";
         txt.style.opacity = '1';
       });
+
+      // Also trigger toast for clipboard copy
+      if (toast) {
+        toast.textContent = "Link copied! Share it on Slack or Teams.";
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2500);
+      }
+    });
+  });
+
+  // 6. Menu jump
+  const menuButtons = document.querySelectorAll('.btn-menu');
+  menuButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const menu = document.getElementById('menu');
+      if (!menu) return;
+      const targetY = menu.getBoundingClientRect().top + window.scrollY;
+      document.scrollingElement.scrollTop = targetY;
+      document.documentElement.scrollTop = targetY;
+      window.scrollTo({ top: targetY, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     });
   });
 
@@ -158,20 +159,20 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       
-      // EDT Toronto July 18, 2026 9:00 PM is UTC July 19, 2026 1:00 AM (01:00)
-      // EDT Toronto July 19, 2026 1:00 AM is UTC July 19, 2026 5:00 AM (05:00)
+      // EDT Toronto July 16, 2026 2:00 PM is UTC July 16, 2026 6:00 PM (18:00)
+      // EDT Toronto July 16, 2026 4:00 PM is UTC July 16, 2026 8:00 PM (20:00)
       const icsLines = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
-        'PRODID:-//PopInvites//Lumen Bloom//EN',
+        'PRODID:-//PopInvites//PopUp Pearl//EN',
         'BEGIN:VEVENT',
-        'UID:lumen-bloom-2026-event@popinvites.com',
+        'UID:popup-pearl-2026-event@popinvites.com',
         'DTSTAMP:20260620T000000Z',
-        'DTSTART:20260719T010000Z',
-        'DTEND:20260719T050000Z',
-        'SUMMARY:Lumen Bloom Soirée',
-        'DESCRIPTION:An after-dark garden party and launch soirée. Dress code: moonlit formal.',
-        'LOCATION:The Glasshouse\\, Toronto',
+        'DTSTART:20260716T180000Z',
+        'DTEND:20260716T200000Z',
+        'SUMMARY:PopUp Pearl Bubble Tea Social',
+        'DESCRIPTION:Internal corporate bubble tea social and team break. Bring your team!',
+        'LOCATION:HQ 4th Floor Garden Terrace',
         'END:VEVENT',
         'END:VCALENDAR'
       ];
@@ -181,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'lumen-bloom.ics';
+      link.download = 'popup-pearl.ics';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -232,8 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 8. Countdown Timer to July 18 2026 21:00 America/Toronto (July 19 2026 01:00 UTC)
-  const countdownTarget = new Date('2026-07-19T01:00:00Z').getTime();
+  // 8. Countdown Timer to July 16 2026 14:00 America/Toronto (July 16 2026 18:00 UTC)
+  const countdownTarget = new Date('2026-07-16T18:00:00Z').getTime();
   
   const dVal = document.querySelector('.days-val');
   const hVal = document.querySelector('.hours-val');

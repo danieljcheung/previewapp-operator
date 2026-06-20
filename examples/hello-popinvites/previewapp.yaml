@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: popinvites-hello
     app.kubernetes.io/part-of: popinvites
 spec:
-  image: ghcr.io/danieljcheung/popinvites-hello@sha256:92a22ca354fde4ccf6b9ff5913d54231d6d98b1c1abc72cc5cbb8ce7ba514f86
+  image: ghcr.io/danieljcheung/popinvites-hello@sha256:1172dad6fb1310fa02bbda7eccff0730dcc364c822bb9caf8c3386ddfb62b0a2
   appPort: 8080
   ttlSeconds: 2592000
   route:

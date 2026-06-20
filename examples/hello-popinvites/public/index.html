@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lumen Bloom — PopInvites Preview</title>
+  <title>PopUp Pearl — Bubble Tea Social</title>
   
   <!-- Preconnect and Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=popup-pearl-20260620b">
 </head>
 <body>
 
@@ -23,52 +23,106 @@
     
     <!-- Header -->
     <header class="app-header">
-      <div class="serif-font" style="font-size: 20px; font-weight: 500; color: var(--color-text-primary);">Lumen Bloom</div>
-      <div class="brand-badge">Private invitation</div>
+      <div class="serif-font" style="font-size: 20px; font-weight: 500; color: var(--color-text-primary);">PopUp Pearl</div>
+      <div class="brand-badge">Boba at HQ</div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-      <h1 class="event-title">Lumen Bloom</h1>
+      <h1 class="event-title">PopUp Pearl Bubble Tea Social</h1>
       <div class="event-meta">
-        <span>Saturday, July 18 · 9:00 PM</span>
+        <span>Thursday, July 16 · 2:00 PM - 4:00 PM</span>
         <span class="meta-divider">·</span>
-        <span>The Glasshouse, Toronto</span>
+        <span>HQ 4th Floor Garden Terrace</span>
         <span class="meta-divider">·</span>
-        <span>Dress code: moonlit formal</span>
+        <span>Bubble Tea Bar Pop-Up · Bring your team</span>
       </div>
       
       <div class="hero-actions">
-        <button class="btn btn-primary btn-rsvp">Reserve your glow</button>
+        <button class="btn btn-primary btn-menu">View the menu</button>
         <button class="btn btn-secondary btn-calendar">Add to calendar</button>
       </div>
       
-      <div class="rsvp-state"></div>
+      <div class="share-state"></div>
     </section>
 
     <!-- The Invitation Section -->
     <section class="section">
       <h2 class="section-title">The invitation</h2>
       <p class="invitation-copy">
-        Under the canopy of night, where light blooms and shadows whisper, we invite you to an evening of sensory wonders. Step into a glass sanctuary filled with living light, ambient motion, and nocturnal melodies.
+        The company email blasts get ignored, so we’re bringing the city’s finest boba straight to you. No spreadsheets, no meetings—just premium bubble tea, hand-crafted toppings, and an afternoon break with your team. Walk up, customize your drink, and recharge.
       </p>
     </section>
 
-    <!-- Night Itinerary Section -->
+    <!-- The Boba Menu Section -->
+    <section id="menu" class="section">
+      <h2 class="section-title">The boba menu</h2>
+      <div class="menu-grid">
+        <div class="menu-card">
+          <div class="menu-card-header">
+            <h3 class="menu-drink-name">Classic Pearl Milk Tea</h3>
+            <span class="menu-tag">Signature</span>
+          </div>
+          <p class="menu-drink-desc">Rich black tea blend brewed slowly, caramelized brown sugar glaze, and house-made slow-cooked chewy tapioca pearls. A timeless corporate classic.</p>
+          <div class="menu-drink-details">
+            <div class="menu-detail-item"><strong>Base:</strong> Signature Milk Tea</div>
+            <div class="menu-detail-item"><strong>Topping:</strong> Brown Sugar Tapioca</div>
+          </div>
+        </div>
+        
+        <div class="menu-card">
+          <div class="menu-card-header">
+            <h3 class="menu-drink-name">Mint Matcha Latte</h3>
+            <span class="menu-tag mint-tag">Vibrant</span>
+          </div>
+          <p class="menu-drink-desc">Organic stone-ground Japanese matcha whisked with fresh mint infusion and lactose-free oat milk. Clean, refreshing, and energizing.</p>
+          <div class="menu-drink-details">
+            <div class="menu-detail-item"><strong>Base:</strong> Whisked Matcha & Oat Milk</div>
+            <div class="menu-detail-item"><strong>Topping:</strong> Crystal Boba</div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div class="menu-card-header">
+            <h3 class="menu-drink-name">Champagne Oolong Creama</h3>
+            <span class="menu-tag oolong-tag">Velvety</span>
+          </div>
+          <p class="menu-drink-desc">Lightly roasted premium oolong tea topped with a salted sweet cheese cream cap and golden honey syrup. Smooth and savory-sweet.</p>
+          <div class="menu-drink-details">
+            <div class="menu-detail-item"><strong>Base:</strong> Roasted Oolong & Salty Foam</div>
+            <div class="menu-detail-item"><strong>Topping:</strong> Golden Honey Boba</div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div class="menu-card-header">
+            <h3 class="menu-drink-name">Jasmine Grapefruit Sparkler</h3>
+            <span class="menu-tag sparkling-tag">Sparkling</span>
+          </div>
+          <p class="menu-drink-desc">Fragrant iced green jasmine tea combined with freshly squeezed red grapefruit and sparkling water. Extremely light, crisp, and fruity.</p>
+          <div class="menu-drink-details">
+            <div class="menu-detail-item"><strong>Base:</strong> Sparkling Jasmine Tea</div>
+            <div class="menu-detail-item"><strong>Topping:</strong> Aloe Vera & Lychee Popping Pearls</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Itinerary Section -->
     <section class="section">
-      <h2 class="section-title">Night itinerary</h2>
+      <h2 class="section-title">The itinerary</h2>
       <div class="itinerary-grid">
         <div class="itinerary-card">
-          <div class="itinerary-time">9:00 PM</div>
-          <div class="itinerary-desc">Arrival cocktails</div>
+          <div class="itinerary-time">2:00 PM</div>
+          <div class="itinerary-desc">Doors & Drizzle (Boba bar opens, first cups poured)</div>
         </div>
         <div class="itinerary-card">
-          <div class="itinerary-time">10:30 PM</div>
-          <div class="itinerary-desc">Garden reveal</div>
+          <div class="itinerary-time">2:45 PM</div>
+          <div class="itinerary-desc">Chef's Special (Seasonal secret flavor revealed)</div>
         </div>
         <div class="itinerary-card">
-          <div class="itinerary-time">12:00 AM</div>
-          <div class="itinerary-desc">Last dance under glass</div>
+          <div class="itinerary-time">4:00 PM</div>
+          <div class="itinerary-desc">Last Call (Final orders before bar closes)</div>
         </div>
       </div>
     </section>
@@ -81,25 +135,25 @@
           <div class="detail-card">
             <h3 class="detail-header">The Venue</h3>
             <p class="detail-body">
-              The Glasshouse is a stunning botanical conservatory situated in downtown Toronto. Featuring 40-foot glass ceilings, it hosts our custom-curated luminous garden installation for one night only.
+              Join us at the HQ 4th Floor Cafeteria and Garden Terrace. Indoor and outdoor seating will be open, with music playing. Bring your team for a casual afternoon check-in.
             </p>
           </div>
           <div class="detail-card">
-            <h3 class="detail-header">Dress Code</h3>
+            <h3 class="detail-header">How to Order</h3>
             <p class="detail-body">
-              Moonlit formal. Guests are requested to wear deep nocturnal hues (navy, forest, charcoal, midnight black) or soft, reflective metallics.
+              No registration or ticket required. Just head up, select your drink from the menu, and let the barista know your sweetness (0% / 30% / 50% / 100%) and ice preference.
             </p>
           </div>
           <div class="detail-card">
-            <h3 class="detail-header">Music</h3>
+            <h3 class="detail-header">Boba Syncs</h3>
             <p class="detail-body">
-              A nocturne of ambient modular synth, brushed strings, and low velvet house follows the garden as it wakes.
+              Feel free to block out your calendar or host a casual team "sync" directly on the terrace. All employees are welcome to join.
             </p>
           </div>
         </div>
         
         <div class="countdown-card" data-countdown>
-          <div class="countdown-label">Time Remaining</div>
+          <div class="countdown-label">Time Until Boba Social</div>
           <div class="countdown-timer">
             <div class="countdown-segment">
               <span class="countdown-value days-val">00</span>
@@ -122,42 +176,34 @@
       </div>
     </section>
 
-    <!-- Your Pass Section -->
+    <!-- Share Card Section -->
     <section class="section">
-      <h2 class="section-title">Your pass</h2>
-      <div class="pass-wrapper">
-        <div class="glass-pass parallax-element">
-          <div class="pass-header">
-            <div>
-              <div class="serif-font pass-event-name">Lumen Bloom</div>
-              <div class="pass-event-type">Admit One Guest</div>
-            </div>
-            <div class="pass-status-badge">Confirmed Guest</div>
+      <h2 class="section-title">Spread the word</h2>
+      <div class="share-wrapper">
+        <div class="share-card parallax-element">
+          <div class="share-card-copy">
+            <span class="share-eyebrow">Forward this instead of the email</span>
+            <h3>Milk tea travels faster than an all-hands memo.</h3>
+            <p>Drop the link in Slack, Teams, or the group chat. The page has the menu, timing, ordering notes, and enough polish that people will actually open it.</p>
           </div>
-          
-          <div class="pass-details-row">
-            <div class="pass-info-block">
-              <span class="pass-info-label">Guest</span>
-              <span class="pass-info-value">Demo Guest</span>
+          <div class="share-note">
+            <div class="share-note-header">
+              <span>Internal event link</span>
+              <strong>hello.popinvites.com</strong>
             </div>
-            <div class="pass-info-block">
-              <span class="pass-info-label">Section</span>
-              <span class="pass-info-value">Garden Terrace</span>
+            <div class="share-note-lines">
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
           </div>
-
-          <div class="pass-qr-wrapper">
-            <div class="pass-qr"></div>
-          </div>
-
-          <div class="pass-actions">
-            <button class="btn btn-primary btn-rsvp">Reserve your glow</button>
-            <button class="btn btn-secondary btn-copy">Copy invite</button>
+          <div class="share-actions">
+            <button class="btn btn-primary btn-share-team">Mark as shared</button>
+            <button class="btn btn-secondary btn-copy">Copy share link</button>
           </div>
         </div>
       </div>
     </section>
-
     <!-- Footer -->
     <footer class="app-footer">
       <div>Made with PopInvites · ephemeral previews on Kubernetes</div>
@@ -167,6 +213,6 @@
 
   <div id="toast" class="toast-container">Link copied to clipboard</div>
 
-  <script src="motion.js"></script>
+  <script src="motion.js?v=popup-pearl-20260620b"></script>
 </body>
 </html>
