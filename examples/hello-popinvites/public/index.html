@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumen Bloom — PopInvites Preview</title>
+  
+  <!-- Preconnect and Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Layer -->
+  <div class="aurora-bg"></div>
+  <canvas id="atmosphere"></canvas>
+
+  <!-- Container for Content -->
+  <div class="container">
+    
+    <!-- Header -->
+    <header class="app-header">
+      <div class="serif-font" style="font-size: 20px; font-weight: 500; color: var(--color-text-primary);">Lumen Bloom</div>
+      <div class="brand-badge">Private invitation</div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1 class="event-title">Lumen Bloom</h1>
+      <div class="event-meta">
+        <span>Saturday, July 18 · 9:00 PM</span>
+        <span class="meta-divider">·</span>
+        <span>The Glasshouse, Toronto</span>
+        <span class="meta-divider">·</span>
+        <span>Dress code: moonlit formal</span>
+      </div>
+      
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-rsvp">Reserve your glow</button>
+        <button class="btn btn-secondary btn-calendar">Add to calendar</button>
+      </div>
+      
+      <div class="rsvp-state"></div>
+    </section>
+
+    <!-- The Invitation Section -->
+    <section class="section">
+      <h2 class="section-title">The invitation</h2>
+      <p class="invitation-copy">
+        Under the canopy of night, where light blooms and shadows whisper, we invite you to an evening of sensory wonders. Step into a glass sanctuary filled with living light, ambient motion, and nocturnal melodies.
+      </p>
+    </section>
+
+    <!-- Night Itinerary Section -->
+    <section class="section">
+      <h2 class="section-title">Night itinerary</h2>
+      <div class="itinerary-grid">
+        <div class="itinerary-card">
+          <div class="itinerary-time">9:00 PM</div>
+          <div class="itinerary-desc">Arrival cocktails</div>
+        </div>
+        <div class="itinerary-card">
+          <div class="itinerary-time">10:30 PM</div>
+          <div class="itinerary-desc">Garden reveal</div>
+        </div>
+        <div class="itinerary-card">
+          <div class="itinerary-time">12:00 AM</div>
+          <div class="itinerary-desc">Last dance under glass</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Details Section -->
+    <section class="section">
+      <h2 class="section-title">The details</h2>
+      <div class="details-grid">
+        <div class="details-column">
+          <div class="detail-card">
+            <h3 class="detail-header">The Venue</h3>
+            <p class="detail-body">
+              The Glasshouse is a stunning botanical conservatory situated in downtown Toronto. Featuring 40-foot glass ceilings, it hosts our custom-curated luminous garden installation for one night only.
+            </p>
+          </div>
+          <div class="detail-card">
+            <h3 class="detail-header">Dress Code</h3>
+            <p class="detail-body">
+              Moonlit formal. Guests are requested to wear deep nocturnal hues (navy, forest, charcoal, midnight black) or soft, reflective metallics.
+            </p>
+          </div>
+          <div class="detail-card">
+            <h3 class="detail-header">Music</h3>
+            <p class="detail-body">
+              A nocturne of ambient modular synth, brushed strings, and low velvet house follows the garden as it wakes.
+            </p>
+          </div>
+        </div>
+        
+        <div class="countdown-card" data-countdown>
+          <div class="countdown-label">Time Remaining</div>
+          <div class="countdown-timer">
+            <div class="countdown-segment">
+              <span class="countdown-value days-val">00</span>
+              <span class="countdown-unit">Days</span>
+            </div>
+            <div class="countdown-segment">
+              <span class="countdown-value hours-val">00</span>
+              <span class="countdown-unit">Hours</span>
+            </div>
+            <div class="countdown-segment">
+              <span class="countdown-value minutes-val">00</span>
+              <span class="countdown-unit">Mins</span>
+            </div>
+            <div class="countdown-segment">
+              <span class="countdown-value seconds-val">00</span>
+              <span class="countdown-unit">Secs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Your Pass Section -->
+    <section class="section">
+      <h2 class="section-title">Your pass</h2>
+      <div class="pass-wrapper">
+        <div class="glass-pass parallax-element">
+          <div class="pass-header">
+            <div>
+              <div class="serif-font pass-event-name">Lumen Bloom</div>
+              <div class="pass-event-type">Admit One Guest</div>
+            </div>
+            <div class="pass-status-badge">Confirmed Guest</div>
+          </div>
+          
+          <div class="pass-details-row">
+            <div class="pass-info-block">
+              <span class="pass-info-label">Guest</span>
+              <span class="pass-info-value">Demo Guest</span>
+            </div>
+            <div class="pass-info-block">
+              <span class="pass-info-label">Section</span>
+              <span class="pass-info-value">Garden Terrace</span>
+            </div>
+          </div>
+
+          <div class="pass-qr-wrapper">
+            <div class="pass-qr"></div>
+          </div>
+
+          <div class="pass-actions">
+            <button class="btn btn-primary btn-rsvp">Reserve your glow</button>
+            <button class="btn btn-secondary btn-copy">Copy invite</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div>Made with PopInvites · ephemeral previews on Kubernetes</div>
+    </footer>
+
+  </div>
+
+  <div id="toast" class="toast-container">Link copied to clipboard</div>
+
+  <script src="motion.js"></script>
+</body>
+</html>

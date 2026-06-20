@@ -1,0 +1,14 @@
+apiVersion: previewapp.danieljcheung.com/v1alpha1
+kind: PreviewApp
+metadata:
+  name: hello
+  namespace: previews
+  labels:
+    app.kubernetes.io/name: popinvites-hello
+    app.kubernetes.io/part-of: popinvites
+spec:
+  image: ghcr.io/danieljcheung/popinvites-hello@sha256:92a22ca354fde4ccf6b9ff5913d54231d6d98b1c1abc72cc5cbb8ce7ba514f86
+  appPort: 8080
+  ttlSeconds: 2592000
+  route:
+    host: hello
