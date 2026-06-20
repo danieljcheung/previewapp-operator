@@ -6,8 +6,8 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
   name: whisper-demo
 spec:
-  image: ghcr.io/stefanprodan/podinfo:6.9.1
-  appPort: 9898
+  image: ghcr.io/danieljcheung/whisper@sha256:c7a67bf56c3c868e41a196d39893778a0005463eb417d4e1ef95f1f4114350b6
+  appPort: 3000
   ttlSeconds: 3600
   route:
     host: whisper-demo

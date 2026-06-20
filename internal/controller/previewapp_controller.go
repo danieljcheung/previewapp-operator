@@ -43,7 +43,7 @@ type PreviewAppReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=previewapp.danieljcheung.com,resources=previewapps,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=previewapp.danieljcheung.com,resources=previewapps,verbs=get;list;watch;update;patch;delete
 // +kubebuilder:rbac:groups=previewapp.danieljcheung.com,resources=previewapps/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=previewapp.danieljcheung.com,resources=previewapps/finalizers,verbs=update
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
@@ -133,7 +133,7 @@ func (r *PreviewAppReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 
 	log.Info("Reconciled Ingress", "name", ingress.Name, "namespace", ingress.Namespace, "operation", operation)
 
-	nextStatus := statusForPreviewApp(&app, deployment, expiresAt)
+	nextStatus := statusForPreviewApp(&app, deployment, service, ingress, expiresAt)
 	if previewAppStatusChanged(app.Status, nextStatus) {
 		app.Status = nextStatus
 		if err := r.Status().Update(ctx, &app); err != nil {
@@ -234,15 +234,21 @@ func ingressSpecForPreviewApp(app *previewappv1alpha1.PreviewApp) networkingv1.I
 	}
 }
 
-func statusForPreviewApp(app *previewappv1alpha1.PreviewApp, deployment *appsv1.Deployment, expiresAt metav1.Time) previewappv1alpha1.PreviewAppStatus {
+func statusForPreviewApp(app *previewappv1alpha1.PreviewApp, deployment *appsv1.Deployment, service *corev1.Service, ingress *networkingv1.Ingress, expiresAt metav1.Time) previewappv1alpha1.PreviewAppStatus {
+	deploymentReady := deployment.Status.AvailableReplicas > 0
+	serviceReady := serviceMatchesPreviewApp(app, service)
+	ingressReady := ingressMatchesPreviewApp(app, ingress)
+	previewReady := deploymentReady && serviceReady && ingressReady
+
 	status := previewappv1alpha1.PreviewAppStatus{
-		Phase:              phaseForDeployment(deployment),
-		URL:                publicURLForPreviewApp(app),
+		Phase:              phaseForPreviewApp(previewReady),
 		ExpiresAt:          &expiresAt,
 		ObservedGeneration: app.Generation,
 	}
+	if previewReady {
+		status.URL = publicURLForPreviewApp(app)
+	}
 
-	deploymentReady := deployment.Status.AvailableReplicas > 0
 	deploymentCondition := metav1.Condition{
 		Type:               "DeploymentReady",
 		Status:             metav1.ConditionFalse,
@@ -257,30 +263,42 @@ func statusForPreviewApp(app *previewappv1alpha1.PreviewApp, deployment *appsv1.
 	}
 	meta.SetStatusCondition(&status.Conditions, deploymentCondition)
 
-	meta.SetStatusCondition(&status.Conditions, metav1.Condition{
+	serviceCondition := metav1.Condition{
 		Type:               "ServiceReady",
-		Status:             metav1.ConditionTrue,
-		Reason:             "ServiceReconciled",
-		Message:            "Service routes traffic to preview pods.",
+		Status:             metav1.ConditionFalse,
+		Reason:             "ServiceMismatch",
+		Message:            "Service does not match the desired preview routing spec.",
 		ObservedGeneration: app.Generation,
-	})
+	}
+	if serviceReady {
+		serviceCondition.Status = metav1.ConditionTrue
+		serviceCondition.Reason = "ServiceReconciled"
+		serviceCondition.Message = "Service routes traffic to preview pods."
+	}
+	meta.SetStatusCondition(&status.Conditions, serviceCondition)
 
-	meta.SetStatusCondition(&status.Conditions, metav1.Condition{
+	ingressCondition := metav1.Condition{
 		Type:               "IngressReady",
-		Status:             metav1.ConditionTrue,
-		Reason:             "IngressReconciled",
-		Message:            "Ingress routes " + publicURLForPreviewApp(app) + ".",
+		Status:             metav1.ConditionFalse,
+		Reason:             "IngressMismatch",
+		Message:            "Ingress does not match the desired PopInvites route.",
 		ObservedGeneration: app.Generation,
-	})
+	}
+	if ingressReady {
+		ingressCondition.Status = metav1.ConditionTrue
+		ingressCondition.Reason = "IngressConfigured"
+		ingressCondition.Message = "Ingress is configured for " + publicURLForPreviewApp(app) + "."
+	}
+	meta.SetStatusCondition(&status.Conditions, ingressCondition)
 
 	readyCondition := metav1.Condition{
 		Type:               "Ready",
 		Status:             metav1.ConditionFalse,
-		Reason:             "PreviewReconciling",
-		Message:            "Preview app is waiting for an available pod.",
+		Reason:             reasonForNotReady(deploymentReady, serviceReady, ingressReady),
+		Message:            messageForNotReady(deploymentReady, serviceReady, ingressReady),
 		ObservedGeneration: app.Generation,
 	}
-	if deploymentReady {
+	if previewReady {
 		readyCondition.Status = metav1.ConditionTrue
 		readyCondition.Reason = "PreviewReady"
 		readyCondition.Message = "Preview app is serving traffic."
@@ -288,6 +306,45 @@ func statusForPreviewApp(app *previewappv1alpha1.PreviewApp, deployment *appsv1.
 	meta.SetStatusCondition(&status.Conditions, readyCondition)
 
 	return status
+}
+
+func serviceMatchesPreviewApp(app *previewappv1alpha1.PreviewApp, service *corev1.Service) bool {
+	if service.Spec.Type != corev1.ServiceTypeClusterIP ||
+		len(service.Spec.Ports) != 1 ||
+		service.Spec.Ports[0].Name != "http" ||
+		service.Spec.Ports[0].Port != 80 ||
+		service.Spec.Ports[0].TargetPort.IntVal != app.Spec.AppPort ||
+		service.Spec.Ports[0].Protocol != corev1.ProtocolTCP {
+		return false
+	}
+
+	labels := labelsForPreviewApp(app)
+	for key, value := range labels {
+		if service.Spec.Selector[key] != value {
+			return false
+		}
+	}
+
+	return true
+}
+
+func ingressMatchesPreviewApp(app *previewappv1alpha1.PreviewApp, ingress *networkingv1.Ingress) bool {
+	if ingress.Spec.IngressClassName == nil ||
+		*ingress.Spec.IngressClassName != "nginx" ||
+		len(ingress.Spec.Rules) != 1 ||
+		ingress.Spec.Rules[0].Host != hostForPreviewApp(app) ||
+		ingress.Spec.Rules[0].HTTP == nil ||
+		len(ingress.Spec.Rules[0].HTTP.Paths) != 1 {
+		return false
+	}
+
+	path := ingress.Spec.Rules[0].HTTP.Paths[0]
+	return path.Path == "/" &&
+		path.PathType != nil &&
+		*path.PathType == networkingv1.PathTypePrefix &&
+		path.Backend.Service != nil &&
+		path.Backend.Service.Name == app.Name &&
+		path.Backend.Service.Port.Number == 80
 }
 
 func previewAppStatusChanged(current, next previewappv1alpha1.PreviewAppStatus) bool {
@@ -329,12 +386,40 @@ func previewAppTimesEqual(current *metav1.Time, next *metav1.Time) bool {
 	return current.Equal(next)
 }
 
-func phaseForDeployment(deployment *appsv1.Deployment) string {
-	if deployment.Status.AvailableReplicas > 0 {
+func phaseForPreviewApp(ready bool) string {
+	if ready {
 		return "Ready"
 	}
 
 	return "Reconciling"
+}
+
+func reasonForNotReady(deploymentReady bool, serviceReady bool, ingressReady bool) string {
+	if !deploymentReady {
+		return "WaitingForAvailableReplicas"
+	}
+	if !serviceReady {
+		return "ServiceNotReady"
+	}
+	if !ingressReady {
+		return "IngressNotReady"
+	}
+
+	return "PreviewReconciling"
+}
+
+func messageForNotReady(deploymentReady bool, serviceReady bool, ingressReady bool) string {
+	if !deploymentReady {
+		return "Preview app is waiting for an available pod."
+	}
+	if !serviceReady {
+		return "Preview app is waiting for a matching Service."
+	}
+	if !ingressReady {
+		return "Preview app is waiting for a matching Ingress."
+	}
+
+	return "Preview app is reconciling."
 }
 
 func hostForPreviewApp(app *previewappv1alpha1.PreviewApp) string {

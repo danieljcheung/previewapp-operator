@@ -45,7 +45,6 @@ rules:
   resources:
   - previewapps
   verbs:
-  - create
   - delete
   - get
   - list

@@ -27,9 +27,9 @@ import (
 // PreviewAppSpec defines the desired state of PreviewApp.
 type PreviewAppSpec struct {
 	// image is the immutable container image reference to run for this preview.
-	// V1 previews are intentionally limited to GHCR-hosted images.
+	// V1 previews are intentionally limited to digest-pinned images published under Daniel's GHCR namespace.
 	// +kubebuilder:validation:Required
-	// +kubebuilder:validation:Pattern=`^ghcr\.io/.+`
+	// +kubebuilder:validation:Pattern=`^ghcr\.io/danieljcheung/[a-z0-9]+([._-][a-z0-9]+)*(/[a-z0-9]+([._-][a-z0-9]+)*)*@sha256:[a-f0-9]{64}$`
 	Image string `json:"image"`
 
 	// appPort is the TCP port exposed by the preview container.
@@ -43,14 +43,14 @@ type PreviewAppSpec struct {
 	// +kubebuilder:validation:Minimum=60
 	TTLSeconds int32 `json:"ttlSeconds"`
 
-	// route configures the private Tailscale preview route.
+	// route configures the public PopInvites preview route.
 	// +kubebuilder:validation:Required
 	Route PreviewAppRouteSpec `json:"route"`
 }
 
-// PreviewAppRouteSpec defines private Tailscale routing for a preview.
+// PreviewAppRouteSpec defines public PopInvites routing for a preview.
 type PreviewAppRouteSpec struct {
-	// host is the short MagicDNS hostname requested through Tailscale Ingress.
+	// host is the short subdomain label requested under popinvites.com.
 	// Use a single DNS label, not a dotted FQDN.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Pattern=`^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`
@@ -65,7 +65,7 @@ type PreviewAppStatus struct {
 	// +optional
 	Phase string `json:"phase,omitempty"`
 
-	// url is set only after the Tailscale Ingress reports a ready hostname.
+	// url is set only after the preview Deployment, Service, and Ingress are ready.
 	// +optional
 	URL string `json:"url,omitempty"`
 
@@ -79,7 +79,7 @@ type PreviewAppStatus struct {
 
 	// conditions represent the current state of the PreviewApp resource.
 	// Known condition types include DeploymentReady, ServiceReady, IngressReady,
-	// Ready, and Expiring.
+	// and Ready.
 	//
 	// The status of each condition is one of True, False, or Unknown.
 	// +listType=map

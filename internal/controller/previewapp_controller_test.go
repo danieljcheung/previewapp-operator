@@ -60,8 +60,8 @@ var _ = Describe("PreviewApp Controller", func() {
 						Namespace: resourceNamespace,
 					},
 					Spec: previewappv1alpha1.PreviewAppSpec{
-						Image:      "ghcr.io/stefanprodan/podinfo:6.9.1",
-						AppPort:    9898,
+						Image:      "ghcr.io/danieljcheung/whisper@sha256:c7a67bf56c3c868e41a196d39893778a0005463eb417d4e1ef95f1f4114350b6",
+						AppPort:    3000,
 						TTLSeconds: 3600,
 						Route: previewappv1alpha1.PreviewAppRouteSpec{
 							Host: "test-resource",
@@ -115,8 +115,8 @@ var _ = Describe("PreviewApp Controller", func() {
 			Expect(podSecurity.SeccompProfile.Type).To(Equal(corev1.SeccompProfileTypeRuntimeDefault))
 
 			container := deployment.Spec.Template.Spec.Containers[0]
-			Expect(container.Image).To(Equal("ghcr.io/stefanprodan/podinfo:6.9.1"))
-			Expect(container.Ports[0].ContainerPort).To(Equal(int32(9898)))
+			Expect(container.Image).To(Equal("ghcr.io/danieljcheung/whisper@sha256:c7a67bf56c3c868e41a196d39893778a0005463eb417d4e1ef95f1f4114350b6"))
+			Expect(container.Ports[0].ContainerPort).To(Equal(int32(3000)))
 			Expect(container.SecurityContext).NotTo(BeNil())
 			Expect(container.SecurityContext.AllowPrivilegeEscalation).NotTo(BeNil())
 			Expect(*container.SecurityContext.AllowPrivilegeEscalation).To(BeFalse())
@@ -135,7 +135,7 @@ var _ = Describe("PreviewApp Controller", func() {
 			Expect(service.Spec.Ports).To(HaveLen(1))
 			Expect(service.Spec.Ports[0].Name).To(Equal("http"))
 			Expect(service.Spec.Ports[0].Port).To(Equal(int32(80)))
-			Expect(service.Spec.Ports[0].TargetPort.IntVal).To(Equal(int32(9898)))
+			Expect(service.Spec.Ports[0].TargetPort.IntVal).To(Equal(int32(3000)))
 			Expect(service.Spec.Ports[0].Protocol).To(Equal(corev1.ProtocolTCP))
 
 			ingress := &networkingv1.Ingress{}
@@ -160,7 +160,7 @@ var _ = Describe("PreviewApp Controller", func() {
 			statusPreviewApp := &previewappv1alpha1.PreviewApp{}
 			Expect(k8sClient.Get(ctx, typeNamespacedName, statusPreviewApp)).To(Succeed())
 			Expect(statusPreviewApp.Status.Phase).To(Equal("Reconciling"))
-			Expect(statusPreviewApp.Status.URL).To(Equal("https://test-resource.popinvites.com"))
+			Expect(statusPreviewApp.Status.URL).To(BeEmpty())
 			Expect(statusPreviewApp.Status.ObservedGeneration).To(Equal(statusPreviewApp.Generation))
 			Expect(statusPreviewApp.Status.ExpiresAt).NotTo(BeNil())
 			Expect(statusPreviewApp.Status.ExpiresAt.Time).To(BeTemporally("~", statusPreviewApp.CreationTimestamp.Add(time.Hour), time.Second))
@@ -178,12 +178,12 @@ var _ = Describe("PreviewApp Controller", func() {
 			ingressReady := meta.FindStatusCondition(statusPreviewApp.Status.Conditions, "IngressReady")
 			Expect(ingressReady).NotTo(BeNil())
 			Expect(ingressReady.Status).To(Equal(metav1.ConditionTrue))
-			Expect(ingressReady.Reason).To(Equal("IngressReconciled"))
+			Expect(ingressReady.Reason).To(Equal("IngressConfigured"))
 
 			ready := meta.FindStatusCondition(statusPreviewApp.Status.Conditions, "Ready")
 			Expect(ready).NotTo(BeNil())
 			Expect(ready.Status).To(Equal(metav1.ConditionFalse))
-			Expect(ready.Reason).To(Equal("PreviewReconciling"))
+			Expect(ready.Reason).To(Equal("WaitingForAvailableReplicas"))
 
 			By("marking the Deployment available and reconciling status again")
 			deployment.Status.Replicas = 1

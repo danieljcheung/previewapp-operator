@@ -48,15 +48,15 @@ spec:
               image:
                 description: |-
                   image is the immutable container image reference to run for this preview.
-                  V1 previews are intentionally limited to GHCR-hosted images.
-                pattern: ^ghcr\.io/.+
+                  V1 previews are intentionally limited to digest-pinned images published under Daniel's GHCR namespace.
+                pattern: ^ghcr\.io/danieljcheung/[a-z0-9]+([._-][a-z0-9]+)*(/[a-z0-9]+([._-][a-z0-9]+)*)*@sha256:[a-f0-9]{64}$
                 type: string
               route:
-                description: route configures the private Tailscale preview route.
+                description: route configures the public PopInvites preview route.
                 properties:
                   host:
                     description: |-
-                      host is the short MagicDNS hostname requested through Tailscale Ingress.
+                      host is the short subdomain label requested under popinvites.com.
                       Use a single DNS label, not a dotted FQDN.
                     maxLength: 63
                     pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
@@ -83,7 +83,7 @@ spec:
                 description: |-
                   conditions represent the current state of the PreviewApp resource.
                   Known condition types include DeploymentReady, ServiceReady, IngressReady,
-                  Ready, and Expiring.
+                  and Ready.
 
                   The status of each condition is one of True, False, or Unknown.
                 items:
@@ -164,8 +164,8 @@ spec:
                 - Failed
                 type: string
               url:
-                description: url is set only after the Tailscale Ingress reports a
-                  ready hostname.
+                description: url is set only after the preview Deployment, Service,
+                  and Ingress are ready.
                 type: string
             type: object
         required:
