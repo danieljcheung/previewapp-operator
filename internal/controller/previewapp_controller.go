@@ -37,6 +37,8 @@ import (
 	previewappv1alpha1 "github.com/danieljcheung/previewapp/api/v1alpha1"
 )
 
+const httpPortName = "http"
+
 // PreviewAppReconciler reconciles a PreviewApp object
 type PreviewAppReconciler struct {
 	client.Client
@@ -102,7 +104,7 @@ func (r *PreviewAppReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		service.Spec.Selector = labelsForPreviewApp(&app)
 		service.Spec.Type = corev1.ServiceTypeClusterIP
 		service.Spec.Ports = []corev1.ServicePort{{
-			Name:       "http",
+			Name:       httpPortName,
 			Port:       80,
 			TargetPort: intstr.FromInt32(app.Spec.AppPort),
 			Protocol:   corev1.ProtocolTCP,
@@ -184,7 +186,7 @@ func deploymentSpecForPreviewApp(app *previewappv1alpha1.PreviewApp) appsv1.Depl
 					Name:  "app",
 					Image: app.Spec.Image,
 					Ports: []corev1.ContainerPort{{
-						Name:          "http",
+						Name:          httpPortName,
 						ContainerPort: app.Spec.AppPort,
 					}},
 					SecurityContext: &corev1.SecurityContext{
@@ -311,7 +313,7 @@ func statusForPreviewApp(app *previewappv1alpha1.PreviewApp, deployment *appsv1.
 func serviceMatchesPreviewApp(app *previewappv1alpha1.PreviewApp, service *corev1.Service) bool {
 	if service.Spec.Type != corev1.ServiceTypeClusterIP ||
 		len(service.Spec.Ports) != 1 ||
-		service.Spec.Ports[0].Name != "http" ||
+		service.Spec.Ports[0].Name != httpPortName ||
 		service.Spec.Ports[0].Port != 80 ||
 		service.Spec.Ports[0].TargetPort.IntVal != app.Spec.AppPort ||
 		service.Spec.Ports[0].Protocol != corev1.ProtocolTCP {
